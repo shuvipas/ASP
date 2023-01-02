@@ -78,3 +78,20 @@ for L =1:5
     scaleder{end + 1} = sqrt(19/219)*er{L};
 end
 sound(scaleder{5}, Fs);
+
+
+avgEr= {};
+for L =1:5
+    avgEr{end +1} = (1/n)*sum(er{L}.^2); % avgEr= {L}<1.25 and it is not so we have a bug
+
+end
+
+
+NR= {};
+sumz2= sum(Z2.^2); 
+for L =1:5
+    NR{end +1} = 10*log10(sumz2/n.*avgEr{L});
+
+end
+
+
