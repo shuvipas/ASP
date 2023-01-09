@@ -188,8 +188,7 @@ NR4 = 10*log10(sum(Z2.^2)./sum(error.^2));
 
 figure
      plot(reEr)
-     str = sprintf("" + ...
-         " relative coefficient error: delta = %f, NR =  %f", delta(d), NR4);
+     str = sprintf("relative coefficient error: delta = %f, NR =  %f", delta(d), NR4);
      title(str)
 
 end
