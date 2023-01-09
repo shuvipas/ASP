@@ -1,3 +1,8 @@
+
+close all
+clear all
+
+
 Fs = 48e3;
 n = 10*Fs;
 alfa = 0.5;
@@ -7,6 +12,7 @@ a1 = [1, -alfa];
 X = filter(b, a1, G);
 N = randn(n, 1);
 Z = X + N;
+
 
 empMeanZ = 1/n*sum(Z);
 empVarZ = 1/n*sum(Z.^2);
@@ -28,7 +34,7 @@ RVec = {0, [0 0], [0 0 0], [0 0 0 0], [0 0 0 0 0]};
 p = {0, [0 0], [0 0 0], [0 0 0 0], [0 0 0 0 0]};
 R= {};
 w = {};
-for L = 1:5
+for L = 1:5mu =0.0001;
    for i = 1:L 
     %R(L, i) = alfa2^(i-1)/(1-alfa2^2);
     if i == 1
@@ -59,7 +65,7 @@ scaledZ2 = sqrt(19/219).*Z2;
 
 scaleder = {};
 for L =1:5
-    scaleder{end+1} = sqrt(19/219)*er{L};
+   scaleder{end+1} = sqrt(19/219)*er{L};
 end
 %sound(scaleder{5}, Fs);
 
@@ -78,6 +84,8 @@ for L = 1:5
 
 end
 
+%{
+% Question 2
 eigenR = eigs(R{4});
 mu = [0.001 0.01 0.1 0.2];
 erNorm = {zeros(100, 1) zeros(100, 1) zeros(100, 1) zeros(100, 1)};
@@ -96,7 +104,7 @@ normW = norm(w{4});
 for i = 1:4
     for j = 1:100
         reEr{i}(j) = 10*log10(erNorm{i}(j)^2/normW^2);
-    end
+    endFs
 end
 %normFactor = 20/max(reEr{4});
 figure;
@@ -106,7 +114,12 @@ plot(x_ax, reEr{2}, 'b')
 plot(x_ax, reEr{3}, 'g')
 plot(x_ax, reEr{4}, 'm')
 ylim([-40 20]);
-%Question 3
+hold off
+
+%}
+
+%QuestioFsFsn 3 
+
 filterOrder = [1 2 4];
 mu = [1e-2 1e-3 1e-4];
 
@@ -118,7 +131,84 @@ mu = [1e-2 1e-3 1e-4];
    % end
 %end
 
-[RE_ERROR, NO_REDUCTION] = LMS(2,0.0001,Z2,w{2});
-   
+
+
+noiseReduction = {[0 0 0], [0 0 0], [0 0 0]};%L =i [1e-2 1e-3 1e-4]
+relitiveError= {{zeros(n,1), zeros(n,1), zeros(n,1)},{zeros(n,1), zeros(n,1), zeros(n,1)},{zeros(n,1), zeros(n,1), zeros(n,1)}};
+for u = 1:3
+    for l =1:3
+        [relitiveError{l}{u}, noiseReduction{l}(u)] = LMS(filterOrder(l),mu(u),Z2,w{filterOrder(l)});
+        figure
+        plot(relitiveError{l}{u})
+        ylim([-10 20])
+        str = sprintf("filter Order: L = %d,  mu = %d",filterOrder(l),mu(u)); %i need to add NR to the title see EX
+        title(str)
+
+    end
+end
+
+
+%Question 4
+
+L=2;
+lambda = 0.99;
+delta = [1e-4 1e-3 1e-2 1e-1];% need to do on more delta values
+
+for d =1:4
+w4 = zeros(L,1);
+P = (1/delta(d))*eye(L);
+error = zeros(length(Z2),1);
+k = zeros(L,1);
+reEr = zeros(length(Z2),1);
+
+for n = 1:(length(Z2)-1)
+    dhat = 0;
+    for l = 1:L
+        if (n - l)<0
+            continue
+        end
+        dhat =+ w4(l)*Z2(n + 1 - l);
+    end
+
+    error(n+1) = Z2(n + 1) - dhat;
+    if (n - L)<0
+       continue
+    end
+     k = ((1/lambda).*P.*flip(Z2((n-L+1):n)))./...
+     (1+(1/lambda).*transpose(flip(Z2((n-L+1):n))).*P.*flip(Z2((n-L+1):n)));
+     w4 =+ k.*error(n+1);
+     P = (1/lambda).*P-(1/lambda).*k.*transpose(flip(Z2((n-L+1):n))).*P;
+    
+    reEr(n) = 10*log10(((norm(w4 -w{2}))^2)/(norm(w{2})^2));
+    
+
+end
+NR4 = 10*log10(sum(Z2.^2)./sum(error.^2));     
+
+figure
+     plot(reEr)
+     str = sprintf("" + ...
+         " relative coefficient error: delta = %f, NR =  %f", delta(d), NR4);
+     title(str)
+
+end
         
-        
+
+
+
+%Question 5
+
+
+[airplane,Fs] = audioread('airplane.wav');
+
+[cafe,Fs] = audioread('cafe.wav');
+
+[city,Fs] = audioread('city.wav');
+
+[vacuumcleaner,Fs] = audioread('vacuumcleaner.wav');
+
+b=[0 1];
+airplaneEst = filter(b, 1, airplane);
+
+
+  
