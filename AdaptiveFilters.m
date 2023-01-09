@@ -1,5 +1,5 @@
 Fs = 48e3;
-n =10*Fs;
+n = 10*Fs;
 alfa = 0.5;
 G = randn(n, 1);
 b = 1;
@@ -16,7 +16,7 @@ scaledZ = sqrt(3/14).*Z;
 
 alfa2 = 0.9;
 N2 = randn(n, 1);
-N2 = (1/4).*N2;
+N2 = sqrt(1/2).*N2;
 G2 = randn(n, 1);
 b2 = 1;
 a2 = [1, -alfa2];
@@ -31,67 +31,94 @@ w = {};
 for L = 1:5
    for i = 1:L 
     %R(L, i) = alfa2^(i-1)/(1-alfa2^2);
-    RVec{L}(i) = alfa2^(i-1)/(1-alfa2^2);
+    if i == 1
+        RVec{L}(i) = alfa2^(i-1)/(1-alfa2^2) + 0.5;
+    else
+        RVec{L}(i) = alfa2^(i-1)/(1-alfa2^2);
+    end
     %p(L, i) = alfa2^(i)/(1-alfa2^2);
     p{L}(i) = alfa2^(i)/(1-alfa2^2);
    end
     R{end+1} = toeplitz(RVec{L});
-    w{end +1} = (inv(R{L}))*p{L}';
+    w{end+1} = (inv(R{L}))*p{L}';
 end
-
-%R1 = toeplitz(RVec(1, 1));
-%R2 = toeplitz(RVec(2, 1:2));
-%R3 = toeplitz(RVec(3, 1:3));
-%R4 = toeplitz(RVec(4, 1:4));
-%R5 = toeplitz(RVec(5, :));
-%p1 = p(1,1);
-%p2 = p(2,1:2);
-%p3 = p(3,1:3);
-%p4 = p(4,1:4);
-%p5 = p(5,1:5);
-%W1 = (inv(R1))*p1';
-%W2 = (inv(R2))*p2';
-%W3 = (inv(R3))*p3';
-%W4 = (inv(R4))*p4';
-%W5 = (inv(R5))*p5';
-
-
-b = 1;
-  
-Zhat=[] ;
+ 
+Zhat = [] ;
 for i = 1:5
     b = [0; w{i}];
-    Zhat{end+1} = filter(b,1,Z);   
+    Zhat{end+1} = filter(b,1,Z2);   
 end
 
-%er = {0,0,0,0,0};
-er= {};
+er = {};
 for L =1:5
-    er{end + 1} = Z - Zhat{L};
+    er{end+1} = Z2 - Zhat{L};
 end
 
-scaledZ2 = sqrt(19/219).*Z;
+scaledZ2 = sqrt(19/219).*Z2;
 %sound(scaledZ2, Fs);
 
-scaleder= {};
+scaleder = {};
 for L =1:5
-    scaleder{end + 1} = sqrt(19/219)*er{L};
+    scaleder{end+1} = sqrt(19/219)*er{L};
 end
-sound(scaleder{5}, Fs);
+%sound(scaleder{5}, Fs);
 
 
-avgEr= {};
-for L =1:5
-    avgEr{end +1} = (1/n)*sum(er{L}.^2); % avgEr= {L}<1.25 and it is not so we have a bug
-
-end
-
-
-NR= {};
-sumz2= sum(Z2.^2); 
-for L =1:5
-    NR{end +1} = 10*log10(sumz2/n.*avgEr{L});
+avgEr = {};
+for L = 1:5
+    avgEr{end+1} = (1/n)*sum(er{L}.^2); 
 
 end
 
 
+NR = {};
+sumz2 = sum(Z2.^2); 
+for L = 1:5
+    NR{end+1} = 10*log10(sumz2/n.*avgEr{L});
+
+end
+
+eigenR = eigs(R{4});
+mu = [0.001 0.01 0.1 0.2];
+erNorm = {zeros(100, 1) zeros(100, 1) zeros(100, 1) zeros(100, 1)};
+for i = 1:4
+    w_gd = [0; 0; 0; 0];
+    for j = 1:100
+        erNorm{i}(j) = norm(w_gd - w{4});
+        delta = mu(i)*(p{4}'-R{4}*w_gd);
+        w_gd = w_gd + delta;
+    end
+end        
+
+x_ax = linspace(0, 99);
+reEr = {zeros(100, 1) zeros(100, 1) zeros(100, 1) zeros(100, 1)};
+normW = norm(w{4});
+for i = 1:4
+    for j = 1:100
+        reEr{i}(j) = 10*log10(erNorm{i}(j)^2/normW^2);
+    end
+end
+%normFactor = 20/max(reEr{4});
+figure;
+plot(x_ax, reEr{1}, 'r')
+hold on
+plot(x_ax, reEr{2}, 'b')
+plot(x_ax, reEr{3}, 'g')
+plot(x_ax, reEr{4}, 'm')
+ylim([-40 20]);
+%Question 3
+filterOrder = [1 2 4];
+mu = [1e-2 1e-3 1e-4];
+
+%noiseRed = zeros(3,3);
+%relativeError = [zeros(n, 3) zeros(n, 3) zeros(n, 3)];
+%for i = 1:3
+ %   for j = 1:3
+  %      [relativeError(:,((i-1)*3+j)), noiseRed(i,j)] = LMS(filterOrder(i),mu(j),Z2,w{filterOrder(i)});
+   % end
+%end
+
+[RE_ERROR, NO_REDUCTION] = LMS(2,0.0001,Z2,w{2});
+   
+        
+        
