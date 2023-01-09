@@ -142,7 +142,7 @@ for u = 1:3
         figure
         plot(relitiveError{l}{u})
         ylim([-10 20])
-        str = sprintf("filter Order: L = %d,  mu = %d",filterOrder(l),mu(u)); %i need to add NR to the title see EX
+        str = sprintf("filter Order: L = %d,  mu = %d noise reduction = %f",filterOrder(l),mu(u),noiseReduction{l}(u) ); 
         title(str)
 
     end
