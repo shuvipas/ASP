@@ -210,6 +210,9 @@ end
 b=[0 1];
 airplaneEst = filter(b, 1, airplane);
 
+%LMSv2(5, 0.1 ,city, "city.wav")
+%LMSv2(L,mu,Z, name)
+
 
 
 
