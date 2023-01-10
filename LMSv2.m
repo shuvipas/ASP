@@ -59,6 +59,9 @@ for n = 1:length(Z)
     plot(dbper)
     str = sprintf("%s LMS: L= %d, mu = %f noise reduction = %fdB ",name, L,mu,NR);
     title(str)
+    xlabel("sample number")
+    ylabel("instantaneous power [dB]")
+    legend("original noise power", "predection error power")
     hold off
 
 end
