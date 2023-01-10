@@ -175,11 +175,16 @@ for n = 1:(length(Z2)-1)
     if (n - L)<0
        continue
     end
-     k = ((1/lambda).*P.*flip(Z2((n-L+1):n)))./...
-     (1+(1/lambda).*transpose(flip(Z2((n-L+1):n))).*P.*flip(Z2((n-L+1):n)));
-     w4 =+ k.*error(n+1);
-     P = (1/lambda).*P-(1/lambda).*k.*transpose(flip(Z2((n-L+1):n))).*P;
     
+    PZ = P.*flip(Z((n-L+1):n)); 
+    Ztrans = transpose(flip(Z((n-L+1):n)));
+    
+    k = ((1/lambda).*PZ)./(1+(1/lambda).*Ztrans.*PZ);
+     
+    w4 =+ k.*error(n+1);
+     
+    P = (1/lambda).*P-(1/lambda).*k.*Ztrans.*P;
+   
     reEr(n) = 10*log10(((norm(w4 -w{2}))^2)/(norm(w{2})^2));
     
 
