@@ -1,0 +1,83 @@
+function [] = RLSv2(L,lambda, delta,Z, name)
+%UNTITLED2 Summary of this function goes here
+%   Detailed explanation goes here
+
+lenZ =length(Z);
+
+for d =1:4
+w4 = zeros(L,1);
+P = (1/delta(d))*eye(L);
+error = zeros(length(Z),1);% this i need to plot
+
+%k = zeros(L,1);
+%reEr = zeros(length(Z),1);
+M = 10e3;
+PSignal = zeros(lenZ,1);
+for n = 1:lenZ
+    if (n - M + 1) < 1 
+        PSignal(n) = 1/M*sum(Z(1:n).^2);
+    else
+        PSignal(n) = 1/M*sum(Z(n-M+1:n).^2);
+    end
+    
+end
+
+
+for n = 1:(lenZ-1)
+    dhat = 0;
+    for l = 1:L
+        if (n - l)<0
+            continue
+        end
+        dhat =+ w4(l)*Z(n + 1 - l);
+    end
+
+    error(n+1) = Z(n + 1) - dhat;
+    if (n - L)<0
+       continue
+    end
+    PZ = P.*flip(Z((n-L+1):n)); 
+    Ztrans = transpose(flip(Z((n-L+1):n)));
+    
+    k = ((1/lambda).*PZ)./...
+     (1+(1/lambda).*Ztrans.*PZ);
+     
+    w4 =+ k.*error(n+1);
+     
+     P = (1/lambda).*P-(1/lambda).*k.*Ztrans.*P;
+    
+   % reEr(n) = 10*log10(((norm(w4 -w{2}))^2)/(norm(w{2})^2)); %i dont know what to put here insted of w{2}
+   % if we tak it we need also to get it in from the function
+   %p.s i dont think we need it at all
+    
+
+end
+
+NR4 = 10*log10(sum(Z.^2)./sum(error.^2));     
+
+PError = zeros(lenZ,1);
+
+for n = 1:lenZ
+    if (n - M + 1) < 1 
+        PError(n) = 1/M*sum(error(1:n).^2);
+    else
+        PError(n) = 1/M*sum(error(n-M+1:n).^2);
+    end
+    dbpsig = 10*log10(PSignal);
+    dbper= 10*log10(PError);
+    figure
+    plot(dbpsig)
+    hold on
+    plot(dbper)
+    str = sprintf("%s RLS: L= %d, lambda = %f, delta =%f, noise reduction = %fdB ",name, L,lambda,delta,NR4);
+    title(str)
+    xlabel("sample number")
+    ylabel("instantaneous power [dB]")
+    legend("original noise power", "predection error power")
+    hold off
+
+
+
+end
+    
+end
