@@ -215,9 +215,25 @@ end
 b=[0 1];
 airplaneEst = filter(b, 1, airplane);
 
-%LMSv2(5, 0.1 ,city, "city.wav")
+
 %LMSv2(L,mu,Z, name)
 
+%LMSv2(5, 0.1 ,city, "city.wav")
+%LMSv2(5, 0.1 ,airplane, "airplane.wav")
+%LMSv2(5, 0.1 ,cafe, "cafe.wav")
+%LMSv2(5, 0.1 ,vacuumcleaner, "vacuumcleaner.wav")
+
+
+% RLSv2(L,lambda, delta,Z, name)
+L5 = 5;
+lambda5 = 0.99;
+delta5 = 1e-4;
+
+
+%RLSv2(L5,lambda5, delta5, city, "city.wav")
+%RLSv2(L5,lambda5, delta5, airplane, "airplane.wav")
+%RLSv2(L5,lambda5, delta5, cafe, "cafe.wav")
+%RLSv2(L5,lambda5, delta5, vacuumcleaner, "vacuumcleaner.wav")
 
 
 
