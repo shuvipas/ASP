@@ -32,7 +32,7 @@ figure
 plot(dbpsig)
 hold on
 plot(dbper)
-str = sprintf("%s LMS: L= %d, mu = %f noise reduction = %fdB ",name, L,mu,NR);
+str = sprintf("%s LMS: L= %d, mu = %f \nnoise reduction = %fdB ",name, L,mu,NR);
 title(str)
 xlabel("sample number")
 ylabel("instantaneous power [dB]")
