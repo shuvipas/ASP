@@ -156,49 +156,14 @@ lambda = 0.99;
 delta = [1e-4 1e-3 1e-2 1e-1];% need to do on more delta values
 
 for d =1:4
-w4 = zeros(L,1);
-P = (1/delta(d))*eye(L);
-error = zeros(length(Z2),1);
-k = zeros(L,1);
-reEr = zeros(length(Z2),1);
-
-for n = 1:(length(Z2)-1)
-    dhat = 0;
-    for l = 1:L
-        if (n - l)<0
-            continue
-        end
-        dhat =+ w4(l)*Z2(n + 1 - l);
-    end
-
-    error(n+1) = Z2(n + 1) - dhat;
-    if (n - L)<0
-       continue
-    end
-    
-    PZ = P.*flip(Z((n-L+1):n)); 
-    Ztrans = transpose(flip(Z((n-L+1):n)));
-    
-    k = ((1/lambda).*PZ)./(1+(1/lambda).*Ztrans.*PZ);
-     
-    w4 =+ k.*error(n+1);
-     
-    P = (1/lambda).*P-(1/lambda).*k.*Ztrans.*P;
-   
-    reEr(n) = 10*log10(((norm(w4 -w{2}))^2)/(norm(w{2})^2));
-    
-
-end
-NR4 = 10*log10(sum(Z2.^2)./sum(error.^2));     
-
-figure
-     plot(reEr)
-     str = sprintf("relative coefficient error: delta = %f, NR =  %f", delta(d), NR4);
+    %[reEr, NR] = RLS(L,lambda, delta,Z,w)
+    [reEr, NR] =  RLS(L,lambda, delta(d),Z2,w{2});
+    figure
+    plot(reEr)
+     str = sprintf("relative coefficient error: delta = %g, NR =  %g", delta(d), NR);
      title(str)
 
 end
-        
-
 
 
 %Question 5
