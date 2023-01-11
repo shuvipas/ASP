@@ -18,28 +18,8 @@ for n = L+1:length(Z)
     estEr(n) =Z(n)- Zhat(n);
         w_lms = w_lms + mu*estEr(n)*U;
 end    
-  
-NR = 10*log10(sum(Z.^2)/sum(estEr.^2));
+  NR = 10*log10(sum(Z.^2)/sum(estEr.^2));
 
-for n = 1:length(Z)
-   
-    for l = 1:L
-        if n-l<1
-            continue
-        end
-        Zhat(n) = Zhat(n)+ w_lms(l)*Z(n-l);
-    end
-    
-    estEr(n) = Zhat(n)  - Z(n);
-      
-    for l =1:L
-        if n-l<1
-            continue
-        end
-        w_lms(l) =+ mu*estEr(n)*Z(n-l);
-    end
-    
-end    
   
 NR = 10*log10(sum(Z.^2)/sum(estEr.^2));
 
