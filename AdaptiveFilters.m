@@ -29,21 +29,18 @@ a2 = [1, -alfa2];
 X2 = filter(b2, a2, G2);
 Z2 = X2 + N2;
 
-%R = zeros([5 5]);
 RVec = {0, [0 0], [0 0 0], [0 0 0 0], [0 0 0 0 0]};
 p = {0, [0 0], [0 0 0], [0 0 0 0], [0 0 0 0 0]};
 R= {};
 w = {};
 for L = 1:5
-    %mu =0.0001;
+    
    for i = 1:L 
-    %R(L, i) = alfa2^(i-1)/(1-alfa2^2);
     if i == 1
         RVec{L}(i) = alfa2^(i-1)/(1-alfa2^2) + 0.5;
     else
         RVec{L}(i) = alfa2^(i-1)/(1-alfa2^2);
     end
-    %p(L, i) = alfa2^(i)/(1-alfa2^2);
     p{L}(i) = alfa2^(i)/(1-alfa2^2);
    end
     R{end+1} = toeplitz(RVec{L});
@@ -85,8 +82,9 @@ for L = 1:5
 
 end
 
-%{
+
 % Question 2
+%{
 eigenR = eigs(R{4});
 mu = [0.001 0.01 0.1 0.2];
 erNorm = {zeros(100, 1) zeros(100, 1) zeros(100, 1) zeros(100, 1)};
@@ -119,20 +117,10 @@ hold off
 
 %}
 
-%QuestioFsFsn 3 
-
+%Question 3 
+%{
 filterOrder = [1 2 4];
 mu = [1e-2 1e-3 1e-4];
-
-%noiseRed = zeros(3,3);
-%relativeError = [zeros(n, 3) zeros(n, 3) zeros(n, 3)];
-%for i = 1:3
- %   for j = 1:3
-  %      [relativeError(:,((i-1)*3+j)), noiseRed(i,j)] = LMS(filterOrder(i),mu(j),Z2,w{filterOrder(i)});
-   % end
-%end
-
-
 
 noiseReduction = {[0 0 0], [0 0 0], [0 0 0]};%L =i [1e-2 1e-3 1e-4]
 relitiveError= {{zeros(n,1), zeros(n,1), zeros(n,1)},{zeros(n,1), zeros(n,1), zeros(n,1)},{zeros(n,1), zeros(n,1), zeros(n,1)}};
@@ -147,10 +135,10 @@ for u = 1:3
 
     end
 end
-
+%}
 
 %Question 4
-
+%{
 L=2;
 lambda = 0.99;
 delta = [1e-4 1e-3 1e-2 1e-1];% need to do on more delta values
@@ -164,33 +152,30 @@ for d =1:4
      title(str)
 
 end
-
+%}
 
 %Question 5
 
-
-[airplane,Fs] = audioread('airplane.wav');
-
-[cafe,Fs] = audioread('cafe.wav');
-
-[city,Fs] = audioread('city.wav');
-
-[vacuumcleaner,Fs] = audioread('vacuumcleaner.wav');
-
-b=[0 1];
-airplaneEst = filter(b, 1, airplane);
-
+%[city,Fs] = audioread('city.wav');
+%[airplane,Fs] = audioread('airplane.wav');
+%[cafe,Fs] = audioread('cafe.wav');
+%[vacuumcleaner,Fs] = audioread('vacuumcleaner.wav');
 
 %LMSv2(L,mu,Z, name)
+L5 = 5;
+mu = 0.1;
 
-%LMSv2(5, 0.1 ,city, "city.wav")
-%LMSv2(5, 0.1 ,airplane, "airplane.wav")
-%LMSv2(5, 0.1 ,cafe, "cafe.wav")
-%LMSv2(5, 0.1 ,vacuumcleaner, "vacuumcleaner.wav")
+%LMSv2(L5, mu ,city, "city.wav")
+%LMSv2(L5, mu ,airplane, "airplane.wav")
+%LMSv2(L5, mu ,cafe, "cafe.wav")
+%LMSv2(L5, mu ,vacuumcleaner, "vacuumcleaner.wav")
+
+
+
 
 
 % RLSv2(L,lambda, delta,Z, name)
-L5 = 5;
+
 lambda5 = 0.99;
 delta5 = 1e-4;
 
@@ -199,6 +184,13 @@ delta5 = 1e-4;
 %RLSv2(L5,lambda5, delta5, airplane, "airplane.wav")
 %RLSv2(L5,lambda5, delta5, cafe, "cafe.wav")
 %RLSv2(L5,lambda5, delta5, vacuumcleaner, "vacuumcleaner.wav")
+
+
+
+%Q6
+znext = adaptivepredict(Z2(1:length(Z2)-1));
+
+
 
 
 
