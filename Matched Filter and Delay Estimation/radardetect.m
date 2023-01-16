@@ -46,11 +46,15 @@ for i =1:N
     yvec(i) = sqrt(A - xvec(i)^2); 
 end
 
+
 figure
 plot(xvec, yvec)
+hold on
+plot(xvec, yvec, '.')
 title("Estimated path of the airplane")
 xlabel("[m]")
 ylabel("[m]")
+hold off
 
 
 
