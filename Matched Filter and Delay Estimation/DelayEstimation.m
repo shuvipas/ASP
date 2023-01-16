@@ -31,6 +31,12 @@ matchedfiltcoeffs = sigvec(end:-1:1);
 filtoutR1vec = filter(matchedfiltcoeffs,1,r1vec);
 [MaxVal,IndexR1vec] = max(filtoutR1vec); 
 
+%{
+figure
+plot(filtoutR1vec)
+title("Matched filter r1vec")
+%}
+
 IndexR1vec = IndexR1vec - L;
 
 filtoutR2vec = filter(matchedfiltcoeffs,1,r2vec);
@@ -38,7 +44,11 @@ filtoutR2vec = filter(matchedfiltcoeffs,1,r2vec);
 
 IndexR2vec = IndexR2vec - L;
 
-
+%{
+figure
+plot(filtoutR2vec)
+title("Matched filter r2vec")
+%}
 
 
 % Question 2
