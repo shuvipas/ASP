@@ -56,8 +56,8 @@ sgtitle("sER = mean(infobits~=rxbits);inc")
 
 %Q 3
 %snr = 100 dB
+config.snrdB = 100;
 figure
-
 subplot(2,1,1)
 ChannelInVec = TX(config,infobits);
 plot(ChannelInVec(1:4*config.Fs))
