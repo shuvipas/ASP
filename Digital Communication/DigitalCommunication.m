@@ -116,7 +116,7 @@ ChannelOutVec = ChannelTXRX(config,ChannelInVec);
 figure
 plot(filterOut((config.Fs + length(txpulse)-4000):(config.Fs + length(txpulse)+4000)))
 hold on
-%plot((config.Fs + length(txpulse)),filterOut(config.Fs + length(txpulse)) ,"x", "r") %plot a red x 
+plot((config.Fs + length(txpulse)),filterOut(config.Fs + length(txpulse)) ,'rx') %plot a red x 
 
 BER1 = mean(infobits ~= rxbits);
 
