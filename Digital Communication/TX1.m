@@ -1,4 +1,4 @@
-function [ChannelInVec] = TX(config,infobits)
+function [ChannelInVec] = TX1(config,infobits)
 %UNTITLED4 Summary of this function goes here
 %   Detailed explanation goes here
 infobits = infobits(:)';
