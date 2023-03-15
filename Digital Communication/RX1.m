@@ -1,4 +1,4 @@
-function [rxbits,filterOut, halfBetta] = RX(config,ChannelOutVec)
+function [rxbits,filterOut, halfBetta] = RX1(config,ChannelOutVec)
 %UNTITLED6 Summary of this function goes here
 %   Detailed explanation goes here
 
