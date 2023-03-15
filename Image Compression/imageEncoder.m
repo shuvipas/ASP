@@ -14,11 +14,13 @@ BWimageScale = (BWimage - 128)./256;
 
 %Blocking is done by dividing the image into blocks of 8×8 (M = 8).
 ImBlocks = zeros(M, M, height/M, width/M);
+
 for i = 1:height/M
     for j = 1:width/M
         ImBlocks(:, :, i, j) = BWimageScale((M*(i-1) + 1:M*i), (M*(j-1) + 1:M*j));
     end
 end
+
 
 %DCT (Discrete-Cosine Transform)
 for i = 1:height/M
@@ -31,10 +33,11 @@ end
 ImBlocks = round(ImBlocks./delta);
 
 %We only use DPCM for the DC coefficients
+DPCM = ImBlocks;
 for i = 1:height/M
     for j = 1:width/M
         if (j > 1)
-            ImBlocks(1, 1, i, j) = ImBlocks(1, 1, i, j) - ImBlocks(1, 1, i, j-1); 
+            DPCM(1, 1, i, j) = ImBlocks(1, 1, i, j) - ImBlocks(1, 1, i, j-1); 
         end 
     end
 end
@@ -46,9 +49,12 @@ Gol_bitstream = strings(1, 100*100);
 B_zigZag = zeros(64, height/M, width/M);
 for i = height/M
     for j = width/M
-        tmp = ImBlocks(:,:,i,j);
+        tmp = DPCM(:,:,i,j);
         B_zigZag(:,i,j) = tmp(ZigZag.ZigZagOrd);
-            
+    end 
+end
+for i = height/M
+    for j = width/M
         current_lastNZ = find(B_zigZag(:,i,j),1,'last');
         if isempty(current_lastNZ)
            current_lastNZ = 1;
@@ -57,8 +63,13 @@ for i = height/M
         index = sub2ind([height/M width/M], i, j);
         bitsoflastNZ = dec2bin(current_lastNZ-1,6);
         lastNZ_bit_stream(1+6*(index-1):6*index) = bitsoflastNZ;
+
         current_Gol_bitstream = golomb_enc(B_zigZag((1:current_lastNZ),i,j));
-        Gol_bitstream(index) = current_Gol_bitstream;
+        
+        Gol_bitstream(1, index) = current_Gol_bitstream; %doesnt put anything 
+
+
+        
     end
 end
 
