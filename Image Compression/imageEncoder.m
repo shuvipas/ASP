@@ -45,15 +45,14 @@ lastNZ_bit_stream = zeros(1, 6*(height/M)*(width/M));
 Gol_bitstream = strings(1, (height/M)*(width/M));
 
 %The zigzag ordering
-BlocksZigZag = zeros(M*M, height/M, width/M);
-for i = 1:height/M
-    for j = 1:width/M
-        tmp = DPCM(:, :, i, j);
-        tmp = reshape(tmp, [1, M*M]);
-        for k = 1:M*M
-            BlocksZigZag(k, i, j) = tmp(ZigZag.ZigZagOrd(k));
-        end
-    end
+BlocksZigZag = zeros(64, height/M, width/M);
+for i = height/M
+    for j = width/M
+        tmp = ImBlocks(:,:,i,j);
+        tmp = DPCM(:,:,i,j);
+        BlocksZigZag(:,i,j) = tmp(ZigZag.ZigZagOrd);
+
+    end 
 end
 
 %Searching for the last non-zero element & Entropy coding
