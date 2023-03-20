@@ -1,5 +1,4 @@
-
-function [decodedImage, BWimage] = imageDecoder(inputBitStream, delta)
+function [decodedImage] = imageDecoder(inputBitStream, delta)
 %UNTITLED7 Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -8,60 +7,34 @@ M = 8;
 height = 100;
 width = 100;
 
-
 ImBlocks = zeros(M, M, height, width);
-
-%{
+Blocks = zeros(M*M, height, width);
+lastNZ_start = length(inputBitStream) - 6*height*width;
+startindex = 1;
 for index = 1:height*width
-    startPoint = length(inputBitStream) - 6*height*width + 1;
-    current_lastNZ = bin2dec(inputBitStream(startPoint + 6*(index-1):6*index));
-    current_block = zeros(1, M*M);
-    
+    current_lastNZ = bin2dec(inputBitStream(lastNZ_start + 6*(index-1):lastNZ_start + 6*index));
+    current_Gol_bitstream = inputBitStream(index);
+    [i, j] = ind2sub([height, width], index);
     for symbol = 1:current_lastNZ
-        [cursymbol, nextstratindex] = golomb_dec(inputBitStream(1:length(inputBitStream) - 6*height*width), stratindex);
-        current_block(symbol) = cursymbol;
-        stratindex = nextstratindex;    
+        [cursymbol, nextstartindex] = golomb_dec(current_Gol_bitstream, startindex);
+        startindex = nextstartindex;
+        Blocks(symbol, i, j) = cursymbol;
     end
-
-
-    %ZigZag_inv = reshape(current_block(ZigZag.ZigZagOrdInv), M, M);
-    for i = 1:height
-        for j = 1:width
-
-             ZigZag_inv =inputBitStream; %B_zigZag;
-
-    i = floor(index / height);
-    j = mod(index, width);
-               ImBlocks(:, :, i, j) = ZigZag_inv(:, i, j);
-        end
-    end
-%}
-for index = 1:height*width
-    startPoint = length(inputBitStream) - 6*height*width + 1;
-    current_lastNZ = bin2dec(inputBitStream(startPoint + 6*(index-1):startPoint +6*index - 1));
-    current_block = zeros(1, M*M);
-    
-    for symbol = 1:current_lastNZ
-        
-        [cursymbol, nextstratindex] = golomb_dec(inputBitStream, stratindex);
-        
-       %[cursymbol, nextstratindex] = golomb_dec(inputBitStream(1:length(inputBitStream) - 6*height*width), stratindex);
-        current_block(symbol) = cursymbol;
-        stratindex = nextstratindex;    
-    end
-    newCurrBlock = current_block(ZigZag.ZigZagOrdInv);
-    ZigZag_inv = reshape(newCurrBlock, M, M);
-    
-
-
-    i = floor(index / height);
-    j = mod(index, width);
-    ImBlocks(:, :, i+1, j+1) = ZigZag_inv(:, :);
 end
-
+    
+zigzag_Inv = zeros(M, M, height, width);
+for i = 1:height
+    for j = 1:width
+        ZigZag_inv = zeros(1, M*M);
+        for k = 1:M*M
+            ZigZag_inv(k) = Blocks(ZigZag.ZigZagOrdInv(k), i, j);
+        end
+        zigzag_Inv(:, :, i, j) = reshape(ZigZag_inv, [M, M]);
+    end
+end
+  
 %Inverse quantization
-ImBlocks = ImBlocks.*delta;
-
+ImBlocks = zigzag_Inv.*delta;
 
 %Inverse DPCM
 DPCMinv = ImBlocks;
@@ -73,7 +46,6 @@ for i = 1:height
         end 
     end
 end
-
 
 %Inverse DCT
 DCTinv = DPCMinv; 
