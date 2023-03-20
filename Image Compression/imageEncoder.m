@@ -21,7 +21,6 @@ for i = 1:height/M
     end
 end
 
-
 %DCT (Discrete-Cosine Transform)
 for i = 1:height/M
     for j = 1:width/M
@@ -42,37 +41,37 @@ for i = 1:height/M
     end
 end
 
-lastNZ_bit_stream = zeros(1, 6*100*100);
-Gol_bitstream = strings(1, 100*100);
+lastNZ_bit_stream = zeros(1, 6*(height/M)*(width/M));
+Gol_bitstream = strings(1, (height/M)*(width/M));
 
 %The zigzag ordering
-B_zigZag = zeros(64, height/M, width/M);
-for i = height/M
-    for j = width/M
-        tmp = DPCM(:,:,i,j);
-        B_zigZag(:,i,j) = tmp(ZigZag.ZigZagOrd);
-    end 
-end
-for i = height/M
-    for j = width/M
-        current_lastNZ = find(B_zigZag(:,i,j),1,'last');
-        if isempty(current_lastNZ)
-           current_lastNZ = 1;
+BlocksZigZag = zeros(M*M, height/M, width/M);
+for i = 1:height/M
+    for j = 1:width/M
+        tmp = DPCM(:, :, i, j);
+        tmp = reshape(tmp, [1, M*M]);
+        for k = 1:M*M
+            BlocksZigZag(k, i, j) = tmp(ZigZag.ZigZagOrd(k));
         end
-            
-        index = sub2ind([height/M width/M], i, j);
-        bitsoflastNZ = dec2bin(current_lastNZ-1,6);
-        lastNZ_bit_stream(1+6*(index-1):6*index) = bitsoflastNZ;
-
-        current_Gol_bitstream = golomb_enc(B_zigZag((1:current_lastNZ),i,j));
-        
-        Gol_bitstream(1, index) = current_Gol_bitstream; %doesnt put anything 
-
-
-        
     end
 end
 
-outputBitStream = [Gol_bitstream lastNZ_bit_stream];
+%Searching for the last non-zero element & Entropy coding
+for i = 1:height/M
+   for j = 1:width/M
+       current_block = reshape(BlocksZigZag(:,i,j), [1, M*M]);
+       current_lastNZ = find(current_block,1,'last');
+       if isempty(current_lastNZ)
+          current_lastNZ = 1;
+       end
+       index = sub2ind([height/M, width/M], i, j);
+       bitsoflastNZ = dec2bin(current_lastNZ - 1, 6);
+       lastNZ_bit_stream(1 + 6*(index-1):6*index) = bitsoflastNZ;
+       current_Gol_bitstream = golomb_enc(current_block(1:current_lastNZ));
+       Gol_bitstream(index) = current_Gol_bitstream;
+   end
+end
 
+outputBitStream = [Gol_bitstream lastNZ_bit_stream];
+    
 end
