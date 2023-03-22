@@ -8,8 +8,6 @@ Image = imread(image);
 BWimage = double(rgb2gray(Image));
 [height, width] = size(BWimage);
 M = 8;
-lastNZ = string(zeros(height/8,width/8));
-blocksEntropy = string(zeros(height/8,width/8));
 
 %Scale from [0, 255] to [−0.5, 127/256] by subtracting 128 and then dividing by 256.
 BWimageScale = (BWimage - 128)./256;
@@ -43,58 +41,39 @@ for i = 1:height/M
     end
 end
 
-lastNZ_bit_stream = zeros(1, 6*(height/M)*(width/M));
+lastNZ_bit_stream = zeros(1, (height/M)*(width/M));
 Gol_bitstream = strings(1, (height/M)*(width/M));
 
 %The zigzag ordering
-BlocksZigZag = zeros(64, height/M, width/M);
-for i = height/M
-    for j = width/M
-        tmp = DPCM(:,:,i,j);
-        BlocksZigZag(:,i,j) = tmp(ZigZag.ZigZagOrd);
-
-    end 
-end
-%{
-%Searching for the last non-zero element
+BlocksZigZag = zeros(M*M, height/M, width/M);
 for i = 1:height/M
-   for j = 1:width/M
-        current_block = BlocksZigZag(:,i,j);
-        current_lastNZ = find(current_block,1,'last');
-        if isempty(current_lastNZ)
-            current_lastNZ = 1;
+    for j = 1:width/M
+        tmp = DPCM(:, :, i, j);
+        tmp = reshape(tmp, [1, M*M]);
+        for k = 1:M*M
+            BlocksZigZag(k, i, j) = tmp(ZigZag.ZigZagOrd(k));
         end
-        lastNZ(i+1, j+1) = dec2bin(current_lastNZ-1,6);
-    end 
-end 
-
-%Entropy
-for i = 1:height/M
-   for j = 1:width/M
-       current_lastNZ = bin2dec(last(i,j))+1;
-       current_block = BlocksZigZag(:,i,j);
-       blocksEntropy(i, j) = golomb_enc(current_block(1:current_lastNZ));
-   
-   end
+    end
 end
 
-%}
 %Searching for the last non-zero element & Entropy coding
 for i = 1:height/M
    for j = 1:width/M
-       current_block = BlocksZigZag(:,i,j);
+       current_block = reshape(BlocksZigZag(:,i,j), [1, M*M]);
        current_lastNZ = find(current_block,1,'last');
        if isempty(current_lastNZ)
           current_lastNZ = 1;
        end
        index = sub2ind([height/M, width/M], i, j);
-       bitsoflastNZ = dec2bin(current_lastNZ - 1, 6) -48;
+       bitsoflastNZ = dec2bin(current_lastNZ - 1, 6);
        lastNZ_bit_stream(1 + 6*(index-1):6*index) = bitsoflastNZ;
        current_Gol_bitstream = golomb_enc(current_block(1:current_lastNZ));
        Gol_bitstream(index) = current_Gol_bitstream;
    end
 end
 
+Gol_bitstream = convertStringsToChars(strjoin(Gol_bitstream, ""));
+lastNZ_bit_stream = char(lastNZ_bit_stream);
 outputBitStream = [Gol_bitstream lastNZ_bit_stream];
     
 end
