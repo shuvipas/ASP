@@ -1,10 +1,8 @@
 function [outputBitStream] = imageEncoder(image, delta)
-%Description: This function takes an image and a quantization step size delta,
-%and performs compression on the image using DCT, DPCM, zigzag ordering, and Golomb coding.%
-%The function returns a binary bitstream containing the compressed data.
-
+%This function takes an image and a quantization step size delta,
+%and performs compression on the image.
 %Parameters:
-%image: The image to be compressed. The image should be in .png, .jpeg, or .bmp format.
+%image: The image to be compressed. 
 %delta: The quantization step size for the DCT coefficients.
 %outputBitStream: The binary bitstream containing the compressed data.
 
