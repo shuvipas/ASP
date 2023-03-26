@@ -1,6 +1,15 @@
 function [ChannelInVec] = TX(config,infobits)
 %UNTITLED4 Summary of this function goes here
 %   Detailed explanation goes here
+%This function takes in configuration parameters and binary information bits to be transmitted
+%and generates a modulated signal that is passed through the channel.
+
+%Parameters:
+%config: Given configuration struct.
+%infobits: a vector of binary information bits to be transmitted.
+%ChannelInVec: a vector representing the transmitted signal after passing through the channel.
+
+
 infobits = infobits(:)';
 BPSKbits = 1-2*infobits; 
 pulseTrain = upsample(BPSKbits, config.Ts);
