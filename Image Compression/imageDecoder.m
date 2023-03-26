@@ -1,7 +1,8 @@
 function [decodedImage] = imageDecoder(inputBitStream, delta)
 %UNTITLED7 Summary of this function goes here
 %   Detailed explanation goes here
-
+%inputBitStream: This is a binary string that represents the compressed image data (It is the output of the imageEncoder).
+%
 ZigZag = load("ZigZagOrd.mat");
 M = 8;
 height = 100;
