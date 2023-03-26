@@ -2,6 +2,13 @@ function [rxbits] = RX(config,ChannelOutVec)
 %UNTITLED6 Summary of this function goes here
 %   Detailed explanation goes here
 
+% Receives a transmitted signal through a channel and decodes the transmitted bits using a matched filter.
+%Parameters:
+%config: Given configuration struct.
+% ChannelOutVec: Vector of the signal received through the channel
+% rxbits: Vector of the decoded bits
+
+
 ChannelOutVec = ChannelOutVec(:)';
 
 txpulse = config.tpulsesinc;
