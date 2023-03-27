@@ -1,6 +1,10 @@
 function [rxbits,filterOut, halfBetta] = RX1(config,ChannelOutVec)
-%UNTITLED6 Summary of this function goes here
-%   Detailed explanation goes here
+% Receives a transmitted signal through a channel and decodes the transmitted bits using a matched filter.
+% Asumming sinc pulses with sinchronization and modulation.
+% Parameters:
+% config: Given configuration struct.
+% ChannelOutVec: Vector of the signal received through the channel.
+% rxbits: Vector of the decoded bits.
 
 ChannelOutVec = ChannelOutVec(:)';
 halfBetta = 0;
