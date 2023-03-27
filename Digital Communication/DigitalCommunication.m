@@ -56,7 +56,6 @@ TXFiltout = conv(txpulse, pulseTrain);
 plot(TXFiltout(1:32*config.Ts))
 title("Output of the first 32 bits from the transmission filter")
 sgtitle("sER = mean(infobits~=rxbits);inc")
-%}
 
 %Q 3
 
@@ -109,7 +108,6 @@ sgtitle("SNR = 12 dB")
 [rxbits, filterOut] = RX1(config,ChannelOutVec);
 BER = mean(infobits ~= rxbits);
 
-%}
 % Q 4
 
 config.snrdB = 100; 
@@ -185,7 +183,7 @@ title("BER vs SNR")
 subtitle("sinc")
 xlabel("SNR")
 ylabel("BER")
-%}
+
 
 
 %Q 5.c
@@ -201,7 +199,7 @@ ChannelOutVec = ChannelTXRX(config,ChannelInVec);
 [rxbits, filterOut] = RX1(config,ChannelOutVec);
 
 BERsynch = mean(infobits ~= rxbits);
-%}
+
 
 %Q 5.d
 
