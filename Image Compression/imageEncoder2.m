@@ -1,7 +1,10 @@
 function [outputBitStream] = imageEncoder2(image, delta)
-%UNTITLED6 Summary of this function goes here
-%   Detailed explanation goes here
-
+%This function takes an image and a quantization step size delta,
+%and performs compression on the image, without the DPCM stage.
+%Parameters:
+%image: The image to be compressed. 
+%delta: The quantization step size.
+%outputBitStream: The binary bitstream containing the compressed data.
 ZigZag = load("ZigZagOrd.mat");
 
 Image = imread(image);
