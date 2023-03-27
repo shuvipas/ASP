@@ -1,10 +1,5 @@
 function [outputBitStream] = imageEncoder(image, delta)
-%This function takes an image and a quantization step size delta,
-%and performs compression on the image.
-%Parameters:
-%image: The image to be compressed. 
-%delta: The quantization step size for the DCT coefficients.
-%outputBitStream: The binary bitstream containing the compressed data.
+the
 
 ZigZag = load("ZigZagOrd.mat");
 
