@@ -1,4 +1,4 @@
-
+%Q 1.a
 delta =[0.5, 0.1, 0.01, 0.001];
 images = ["cat800x800.bmp" "flower800x800.bmp" "zakir800x800.bmp" "shades800x800.bmp"];
 psnrMat = zeros(length(images), length(delta));
@@ -17,7 +17,7 @@ for i = 1:length(images)
         MSE = immse(BWimage, decodedImage);
         sizeDesMat(i,d) = length(outputBitStream)/(800*800);
         psnrMat(i,d) = 10*log10(255/sqrt(MSE));
-              
+        %Q 1.b    
         if delta(d) == 0.5
             figure
             imshow(uint8(decodedImage))
@@ -32,11 +32,13 @@ for i = 1:length(images)
     end
 end
 
+%Q 1.c
+
 jpegBenchPsnr = [JPEGbenchmark.catPSNRvecJpeg; JPEGbenchmark.flowerPSNRvecJpeg; JPEGbenchmark.zakirPSNRvecJpeg; JPEGbenchmark.shadesPSNRvecJpeg];
 jpegBenchSize = [JPEGbenchmark.catSizevecJpeg; JPEGbenchmark.flowerSizevecJpeg; JPEGbenchmark.zakirSizevecJpeg; JPEGbenchmark.shadesSizevecJpeg];
 for i = 1:length(images)
     str = sprintf("%s",images(i));
-    
+    %Q 1.c1
     figure
     plot(jpegBenchSize(i,:), jpegBenchPsnr(i,:));
     title("PSNR vs. bpp of the Matlab’s embedded compression engine")
@@ -44,7 +46,7 @@ for i = 1:length(images)
     xlabel("bits per pixel")
     ylabel("PSNR")
 
-    
+    %Q 1.c2
     figure
     plot(sizeDesMat(i,:), psnrMat(i,:));
     title("PSNR vs. bpp of our Matlab compression");
@@ -52,6 +54,7 @@ for i = 1:length(images)
     xlabel("bits per pixel")
     ylabel("PSNR")
     
+    %Q 1.c3
     figure
     plot(sizeDesMat2(i,:), psnrMat2(i,:));
     title("PSNR vs. bpp of our Matlab without DPCM");
@@ -62,3 +65,4 @@ for i = 1:length(images)
 end
 
 
+the
