@@ -63,6 +63,3 @@ for i = 1:length(images)
     ylabel("PSNR")
     
 end
-
-
-the
