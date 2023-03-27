@@ -1,6 +1,10 @@
 function [decodedImage] = imageDecoder2(inputBitStream, delta)
-%UNTITLED7 Summary of this function goes here
-%   Detailed explanation goes here
+%This function takes a binary bitstream containing a compressed image 
+% and a quantization step size delta, and decodes it into a grayscale image, without the DPCM step.
+%Parameters:
+%inputBitStream: This is a binary string that represents the compressed image data (It is the output of the imageEncoder).
+%delta: The quantization step size.
+%decodedImage: the restored image.
 
 ZigZag = load("ZigZagOrd.mat");
 M = 8;
